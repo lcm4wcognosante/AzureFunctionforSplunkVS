@@ -25,25 +25,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace AzureFunctionForSplunk
 {
-    public static class EhMetricsExt
+    public static class EhProtoExt
     {
-        [FunctionName("EhMetricsExt")]
+        [FunctionName("EhProtoExt")]
         public static async Task Run(
-            [EventHubTrigger("%input-hub-name-metrics%", Connection = "hubConnection", ConsumerGroup = "%consumer-group-metrics%")]string[] messages,
+            [EventHubTrigger("%input-hub-name-proto%", Connection = "hubConnection", ConsumerGroup = "%consumer-group-proto%")]string[] messages,
             [EventHub("%output-hub-name-proxy%", Connection = "outputHubConnection")]IAsyncCollector<string> outputEvents,
             IBinder blobFaultBinder,
             IBinder incomingBatchBinder,
-            Binder queueFaultBinder,
+            Binder queueFaultBinder, 
             ILogger log)
         {
             var runner = new Runner();
-            await runner.Run<MetricMessages, MetricsSplunkEventMessages>(messages, blobFaultBinder, queueFaultBinder, incomingBatchBinder, outputEvents, log);
+            await runner.Run<ActivityLogMessages, SplunkEventMessages>(messages, blobFaultBinder, queueFaultBinder, incomingBatchBinder, outputEvents, log);
         }
     }
 }
